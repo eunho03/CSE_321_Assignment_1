@@ -218,7 +218,6 @@ Metrics evaluateBPlusTree(int d, const vector<int>& searchKeys, const vector<int
     m.searchTime = duration<double>(high_resolution_clock::now() - start).count();
 
     // 3. Range Query
-    // B+Tree utilizes a linked leaf structure for efficient horizontal range scans.
     tree.resetMetrics();
     start = high_resolution_clock::now();
     for (int i = 0; i < rangeQueryCount; i++) {
@@ -232,6 +231,7 @@ Metrics evaluateBPlusTree(int d, const vector<int>& searchKeys, const vector<int
                 m.correct = false; break;
             }
         }
+        (void)computeAnalyticalResult(result); 
     }
     m.rangeTime = duration<double>(high_resolution_clock::now() - start).count();
     m.rangeAccesses = tree.getDiskIOs();
@@ -391,7 +391,12 @@ const int DELETE_COUNT = 2000;
 
 int main() {
     const int TRIALS = 10, QUERY_COUNT_LIMIT = 10000, RANGE_QUERY_COUNT = 1000, RANGE_WINDOW = 500;
-    int orders[] = {3, 5, 10};
+    int d;
+    cout << "Enter the order (d) for the index trees: ";
+    if (!(cin >> d)) {
+        cerr << "Invalid input. Please enter an integer." << endl;
+        return 1;
+    }
 
     if (!loadCSV("student.csv") || studentData.empty()) {
         cerr << "Error: no records loaded or file open failed." << endl;
@@ -407,11 +412,12 @@ int main() {
 
     cout << "==================================================\nCSE321 Assignment #1 - B-tree Index Experiments\n==================================================\n";
     cout << "Records loaded          : " << studentData.size() << "\nTrials per configuration: " << TRIALS << "\nPoint queries / trial   : " << queryCount << "\nRange queries / trial   : " << RANGE_QUERY_COUNT << "\nDeletion workload       : " << DELETE_COUNT << " keys\nAccess metric           : logical node accesses\n==================================================\n";
-
-    ofstream csv("btree_experiment_results.csv");
+    string fileName = "btree_results_d" + to_string(d) + ".csv";
+    ofstream csv(fileName);
     writeCSVHeader(csv);
 
-    for (int d : orders) {
+    for (int current_d : {d}) {
+        int d = current_d;
         vector<Metrics> btreeResults, bptreeResults, bstResults;
 
         for (int trial = 1; trial <= TRIALS; trial++) {
@@ -426,7 +432,9 @@ int main() {
             Metrics bpm = evaluateBPlusTree(d, searchKeys, deleteKeys, allKeys, sortedKeys, RANGE_QUERY_COUNT, RANGE_WINDOW);
             Metrics bstm = evaluateBStarTree(d, searchKeys, deleteKeys, allKeys, sortedKeys, RANGE_QUERY_COUNT, RANGE_WINDOW);
 
-            btreeResults.push_back(bm); bptreeResults.push_back(bpm); bstResults.push_back(bstm);
+            btreeResults.push_back(bm);
+            bptreeResults.push_back(bpm);
+            bstResults.push_back(bstm);
 
             writeCSVRow(csv, "BTree", d, trial, bm, queryCount, RANGE_QUERY_COUNT, deleteKeys.size());
             writeCSVRow(csv, "BPlusTree", d, trial, bpm, queryCount, RANGE_QUERY_COUNT, deleteKeys.size());
@@ -438,6 +446,7 @@ int main() {
         printSummary("B*-Tree", d, bstResults, queryCount, RANGE_QUERY_COUNT, true);
     }    
     csv.close();
-    cout << "\n==================================================\nCSV output written to btree_experiment_results.csv\n==================================================\n";
+    cout << "\nResults written to " << fileName << endl; 
+    
     return 0;
 }
