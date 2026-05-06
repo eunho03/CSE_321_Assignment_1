@@ -137,7 +137,6 @@ def plot_deletion_strategy_ratio(df):
 
         positions = [p + (i - 1) * width for p in x]
 
-        # Merge ratio 
         ax.bar(
             positions,
             merge_vals,
@@ -147,7 +146,6 @@ def plot_deletion_strategy_ratio(df):
             alpha=0.85,
         )
 
-        # Borrow ratio
         ax.bar(
             positions,
             borrow_vals,
@@ -326,11 +324,53 @@ def print_deletion_analysis_report(df):
 def main():
     df = load_results()
 
-    plot_grouped_bar(df, metric="insert_time", ylabel="Insertion time (s)", title="Insertion Time by Tree Type and Order", filename="insert_time.png")
-    plot_grouped_bar(df, metric="avg_search_access", ylabel="Logical accesses per query", title="Point Search Cost by Tree Type and Order", filename="search_access.png")
-    plot_grouped_bar(df, metric="avg_range_access", ylabel="Logical accesses per range query", title="Range Query Cost by Tree Type and Order", filename="range_access.png")
-    plot_grouped_bar(df, metric="utilization", ylabel="Node utilization (%)", title="Node Utilization by Tree Type and Order", filename="utilization.png")
-    plot_grouped_bar(df, metric="height", ylabel="Tree height", title="Tree Height by Tree Type and Order", filename="height.png")
+    plot_grouped_bar(
+        df,
+        metric="insert_time",
+        ylabel="Insertion time (s)",
+        title="Insertion Time by Tree Type and Order",
+        filename="insert_time.png",
+    )
+
+    plot_grouped_bar(
+        df,
+        metric="splits",
+        ylabel="Average number of node splits",
+        title="Node Splits During Insertion by Tree Type and Order",
+        filename="split_count.png",
+    )
+
+    plot_grouped_bar(
+        df,
+        metric="avg_search_access",
+        ylabel="Logical accesses per query",
+        title="Point Search Cost by Tree Type and Order",
+        filename="search_access.png",
+    )
+
+    plot_grouped_bar(
+        df,
+        metric="avg_range_access",
+        ylabel="Logical accesses per range query",
+        title="Range Query Cost by Tree Type and Order",
+        filename="range_access.png",
+    )
+
+    plot_grouped_bar(
+        df,
+        metric="utilization",
+        ylabel="Node utilization (%)",
+        title="Node Utilization by Tree Type and Order",
+        filename="utilization.png",
+    )
+
+    plot_grouped_bar(
+        df,
+        metric="height",
+        ylabel="Tree height",
+        title="Tree Height by Tree Type and Order",
+        filename="height.png",
+    )
 
     plot_deletion_events(df)
     plot_deletion_strategy_ratio(df)
