@@ -42,18 +42,22 @@ Ensure you have the following installed in your environment:
 
 # 2. Compilation (C++)
 Open your terminal in the repository root directory and compile the C++ source files using the following command:
+```bash
+# Standard compilation
+g++ -std=c++11 main.cpp BTree.cpp BPlusTree.cpp BStarTree.cpp -o main
 
-g++ -std=c++11 main.cpp BTree.cpp BPlusTree.cpp BStarTree.cpp -o result
-
+# If using MinGW on Windows (explicit .exe extension)
+g++ -std=c++11 main.cpp BTree.cpp BPlusTree.cpp BStarTree.cpp -o main.exe
+```
 # 3. Execution (C++)
 Run the compiled executable. The program will first prompt you to enter the tree order d. You must enter an integer (e.g., 3, 5, or 10) and press Enter.
+```bash
+# On Windows
+.\main.exe
 
-## On Windows
-.\result.exe
-
-## On Linux/macOS
-./result
-
+# On Linux/macOS
+./main
+```
 ## Execution Flow:
 
 Input Prompt: Enter the order (d):
@@ -68,17 +72,19 @@ Note: To evaluate multiple orders as requested in the manual, simply run the exe
 
 # 4. Data Visualization (Python)
 To generate the performance charts, install the required Python dependencies:
-## On Windows
+```bash
+# On Windows
 pip install pandas matplotlib
 
-## On Linux/macOS (Use pip3 if pip is not recognized)
+# On Linux/macOS (Use pip3 if pip is not recognized)
 pip3 install pandas matplotlib
-
+```
 Once the packages are installed and the C++ program has successfully created the CSV files (e.g., btree_results_d3.csv, btree_results_d5.csv, btree_results_d10.csv), run the Python script to process the results:
-## On Windows
+```bash
+# On Windows
 python plot_results.py
 
-## On Linux/macOS
+# On Linux/macOS
 python3 plot_results.py
-
+```
 (The script will automatically read the generated CSV files and produce the corresponding analytical plots).
